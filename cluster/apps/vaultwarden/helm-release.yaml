@@ -1,0 +1,175 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: vaultwarden
+  namespace: vaultwarden
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 0.2.2
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      interval: 15m
+
+  values:
+    image:
+      repository: vaultwarden/server
+      tag: v1.25.2
+
+    strategy:
+      type: Recreate
+
+    env:
+      DOMAIN: https://bitwarden.${SECRET_DOMAIN}
+      DATA_FOLDER: "config"
+      ICON_CACHE_FOLDER: "config/icon_cache"
+      ATTACHMENTS_FOLDER: "config/attachments"
+      SENDS_FOLDER: "config/sends"
+      SIGNUPS_ALLOWED: false
+      INVITATIONS_ALLOWED: true
+      WEBSOCKET_ENABLED: true
+      WEBSOCKET_ADDRESS: 0.0.0.0
+      WEBSOCKET_PORT: 3012
+      SENDS_ALLOWED: true
+      EMERGENCY_ACCESS_ALLOWED: true
+      DISABLE_ICON_DOWNLOAD: false
+      DISABLE_2FA_REMEMBER: false
+      EMAIL_ATTEMPTS_LIMIT: 3
+      PASSWORD_HINTS_ALLOWED: false
+      ROCKET_PORT: 8080
+      SMTP_SSL: true
+      SMTP_PORT: 587
+
+      SIGNUPS_DOMAINS_WHITELIST:
+        valueFrom:
+          secretKeyRef:
+            name: vaultwarden-env
+            key: SIGNUPS_DOMAINS_WHITELIST
+      ORG_CREATION_USERS:
+        valueFrom:
+          secretKeyRef:
+            name: vaultwarden-env
+            key: ORG_CREATION_USERS
+      INVITATION_ORG_NAME:
+        valueFrom:
+          secretKeyRef:
+            name: vaultwarden-env
+            key: INVITATION_ORG_NAME      
+      SMTP_HOST:
+        valueFrom:
+          secretKeyRef:
+            name: vaultwarden-env
+            key: SMTP_HOST
+      SMTP_FROM:
+        valueFrom:
+          secretKeyRef:
+            name: vaultwarden-env
+            key: SMTP_FROM
+      SMTP_FROM_NAME:
+        valueFrom:
+          secretKeyRef:
+            name: vaultwarden-env
+            key: SMTP_USERNAME
+      SMTP_USERNAME:
+        valueFrom:
+          secretKeyRef:
+            name: vaultwarden-env
+            key: SMTP_USERNAME
+      SMTP_PASSWORD:
+        valueFrom:
+          secretKeyRef:
+            name: vaultwarden-env
+            key: SMTP_PASSWORD
+      YUBICO_CLIENT_ID:
+        valueFrom:
+          secretKeyRef:
+            name: vaultwarden-env
+            key: YUBICO_CLIENT_ID
+      YUBICO_SECRET_KEY:
+        valueFrom:
+          secretKeyRef:
+            name: vaultwarden-env
+            key: YUBICO_SECRET_KEY
+
+    envFrom:
+      - secretRef:
+          name: vaultwarden-env
+
+    service:
+      main:
+        ports:
+          http:
+            port: 8080
+          websocket:
+            enabled: true
+            port: 3012
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: "traefik"
+        annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+          traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflare-ips@kubernetescrd"
+          hajimari.io/enable: "true"
+          hajimari.io/icon: "shield-key"
+          hajimari.io/appName: "vaultwarden"
+          # external-dns/is-public: "true"
+          # external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+        hosts:
+        - host: &host "bitwarden.${SECRET_DOMAIN}"
+          paths:
+          - path: /
+            pathType: Prefix
+            service:
+              port: 8080
+          - path: /notifications/hub
+            pathType: Prefix
+            service:
+              port: 3012
+          - path: /notifications/hub/negotiate
+            pathType: Prefix
+            service:
+              port: 8080
+        tls:
+        - hosts:
+          - *host
+      admin:
+        enabled: true
+        ingressClassName: "traefik"
+        annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+          traefik.ingress.kubernetes.io/router.middlewares: "networking-rfc1918@kubernetescrd"
+        hosts:
+        - host: *host
+          paths:
+          - path: /admin
+            pathType: Prefix
+            service:
+              port: 8080
+        tls:
+        - hosts:
+          - *host
+    persistence:
+      config:
+        enabled: true
+        existingClaim: vaultwarden-config
+
+    resources:
+      requests:
+        memory: 100Mi
+        cpu: 100m
+      limits:
+        memory: 2000Mi
+
+    podSecurityContext:
+      runAsUser: 568
+      runAsGroup: 568
+      fsGroup: 568
+      fsGroupChangePolicy: "OnRootMismatch"
+      supplementalGroups:
+        - 100

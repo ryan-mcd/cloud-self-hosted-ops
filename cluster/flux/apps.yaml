@@ -14,10 +14,11 @@ spec:
   dependsOn:
     - name: config
     - name: charts
+    - name: crds
   decryption:
     provider: sops
     secretRef:
-      name: sops-age
+      name: sops-gpg
   postBuild:
     substituteFrom:
       - kind: ConfigMap

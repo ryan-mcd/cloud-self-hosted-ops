@@ -1,3 +1,22 @@
+# Kubernetes single node cluster for deployment into Oracle Cloud Free Tier
+
+## Current applications deployed
+
+* Vaultwarden
+
+## Tweak k3s install
+
+```script
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik,metrics-server" sh -
+mkdir -p /etc/rancher/k3s
+touch /etc/rancher/k3s/config.yaml
+cat > /etc/rancher/k3s/config.yaml <<EOF
+disable:
+- traefik
+- metrics-server
+EOF
+```
+
 # Template for deploying k3s backed by Flux
 
 Highly opinionated template for deploying a single [k3s](https://k3s.io) cluster with [Ansible](https://www.ansible.com) and [Terraform](https://www.terraform.io) backed by [Flux](https://toolkit.fluxcd.io/) and [SOPS](https://toolkit.fluxcd.io/guides/mozilla-sops/).
