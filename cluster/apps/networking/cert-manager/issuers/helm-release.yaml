@@ -40,7 +40,7 @@ spec:
               - dns01:
                   cloudflare:
                     email: "${SECRET_CLOUDFLARE_EMAIL}"
-                    apiKeySecretRef:
+                    apiTokenSecretRef:
                       name: cloudflare-api-key
                       key: api-key
                 selector:
@@ -61,7 +61,7 @@ spec:
               - dns01:
                   cloudflare:
                     email: "${SECRET_CLOUDFLARE_EMAIL}"
-                    apiKeySecretRef:
+                    apiTokenSecretRef:
                       name: cloudflare-api-key
                       key: api-key
                 selector:
