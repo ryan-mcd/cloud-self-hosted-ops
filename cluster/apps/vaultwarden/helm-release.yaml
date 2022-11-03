@@ -115,6 +115,7 @@ spec:
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
           traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflare-ips@kubernetescrd"
+          cert-manager.io/cluster-issuer: "letsencrypt-staging"
           hajimari.io/enable: "true"
           hajimari.io/icon: "shield-key"
           hajimari.io/appName: "vaultwarden"
@@ -138,6 +139,7 @@ spec:
         tls:
         - hosts:
           - *host
+          secretName: "bitwarden-${SECRET_DOMAIN/./-}-tls"
       admin:
         enabled: true
         ingressClassName: "traefik"
@@ -154,6 +156,8 @@ spec:
         tls:
         - hosts:
           - *host
+          secretName: "bitwarden-${SECRET_DOMAIN/./-}-tls"
+
     persistence:
       config:
         enabled: true
