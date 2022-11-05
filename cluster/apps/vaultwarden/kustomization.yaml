@@ -7,4 +7,4 @@ resources:
   - vaultwarden-config-pvc.yaml
   - vaultwarden-backup-pvc.yaml
   - secret.sops.yaml
-  # - vw-backup-cronjob.yaml
+  - vw-backup-cronjob.yaml
