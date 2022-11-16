@@ -1,0 +1,39 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: gitlab-runner
+  namespace: gitlab
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: gitlab-runner
+      version: 0.46.1
+      sourceRef:
+        kind: HelmRepository
+        name: gitlab
+        namespace: flux-system
+      interval: 5m
+  values:
+    env:
+      TZ: "${TIMEZONE}"
+    replicas: 2
+    # image: gitlab/gitlab-runner:alpine-v15.0.2
+    imagePullPolicy: IfNotPresent
+    gitlabUrl: https://gitlab.${SECRET_DOMAIN2}
+    concurrent: 20
+    unregisterRunners: true
+    logLevel: info
+    runners:
+      secret: gitlab-runner-secret
+      privileged: true
+      cache_dir: cache
+      imagePullPolicy: "if-not-present"
+      # serviceAccountName: gitlab-admin
+      namespace: default
+
+    rbac:
+      create: true
+      # serviceAccountName: gitlab-admin
+      # clusterWideAccess: true

@@ -1,0 +1,131 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: gitlab
+  namespace: gitlab
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: gitlab
+      version: 6.5.4
+      sourceRef:
+        kind: HelmRepository
+        name: gitlab
+        namespace: flux-system
+      interval: 1h
+  values:
+    global:
+      # nodeSelector:
+      #   beta.kubernetes.io/arch: amd64
+      edition: ee
+      hosts:
+        domain: "${SECRET_DOMAIN2}"
+      ingress:
+        enabled: true
+        configureCertmanager: false
+        class: traefik
+        # tls.secretName: somethingsomething
+        annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+          traefik.ingress.kubernetes.io/router.middlewares: "networking-cloudflare-ips@kubernetescrd"
+          cert-manager.io/cluster-issuer: "letsencrypt-staging"
+      # ingress:
+      #   class: internal
+      #   annotations:
+      #     nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+      #   # Wildcard is configured by default
+      #   configureCertmanager: false
+      #   # TLS is enabled by default
+      #   tls:
+      #     enabled: false
+      kas:
+        enabled: false
+      pages:
+        enabled: true
+      # email:
+      #   display_name: 'GitLab'
+      #   from: 'gitlab@sko.ai'
+      #   reply_to: 'noreply@sko.ai'
+      # smtp:
+      #   enabled: true
+      #   address: 'mailserver.mailserver'
+      #   port: 25
+      #   tls: false
+      #   authentication: ''
+
+      # appConfig:
+      #   omniauth:
+      #     enabled: true
+      #     autoSignInWithProvider: []
+      #     syncProfileFromProvider: [openid_connect]
+      #     allowSingleSignOn: [openid_connect]
+      #     allowBypassTwoFactor: [openid_connect]
+      #     syncProfileAttributes: [email]
+      #     blockAutoCreatedUsers: false
+      #     providers: 
+      #       - secret: authelia-oauth2
+    # Reduce memory usage
+    gitlab:
+      gitaly:
+        resources:
+          requests:
+            cpu: 80m
+            memory: 340M
+          limits:
+            cpu: 1800m
+      webservice:
+        minReplicas: 1
+        maxReplicas: 1
+        # https://gitlab.com/gitlab-org/charts/gitlab/-/blob/master/examples/ref/2k.yaml
+        workerProcesses: 1
+        resources:
+          limits:
+            memory: 3.5Gi # roughly, 1.5GB/worker
+          requests:
+            cpu: "0.9" # requests.cpu <= workerProcesses
+            memory: 1.25Gi # roughly, 1.25GB/worker
+      sidekiq:
+        minReplicas: 1
+        maxReplicas: 1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+          limits:
+            # cpu: 1000m
+            memory: 2000Mi
+      gitlab-shell:
+        minReplicas: 1
+        maxReplicas: 1
+      toolbox:
+        persistence:
+          size: 1Gi
+        resources:
+          limits:
+            # cpu: 100m
+            memory: 350M
+        backups:
+          cron:
+            persistence:
+              size: 1Gi
+            # resources:
+            #   limits:
+            #     cpu: 100m
+            #     memory: 200M
+      gitlab-pages:
+        # The default requests are massive for a static server
+        resources:
+          requests:
+            cpu: 10m
+            memory: 10Mi
+    # Disable things we handle by ourselves
+    # prometheus:
+    #   install: false
+    # grafana:
+    #   enabled: false
+    certmanager:
+      install: false
+    nginx-ingress:
+      enabled: false
