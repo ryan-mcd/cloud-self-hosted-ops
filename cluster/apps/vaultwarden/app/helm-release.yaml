@@ -18,13 +18,14 @@ spec:
 
   values:
     image:
-      repository: vaultwarden/server
-      tag: "1.25.2"
+      repository: ghcr.io/ryan-mcd/vaultwarden
+      tag: "v1.27.0"
 
     strategy:
       type: Recreate
 
     env:
+      TZ: "${TIMEZONE}"
       DOMAIN: https://bitwarden.${SECRET_DOMAIN}
       DATA_FOLDER: "config"
       ICON_CACHE_FOLDER: "config/icon_cache"
@@ -44,6 +45,7 @@ spec:
       ROCKET_PORT: 8080
       SMTP_SSL: true
       SMTP_PORT: 587
+      # IP_HEADER: "X-Envoy-External-Address" # Used for istio
 
       SIGNUPS_DOMAINS_WHITELIST:
         valueFrom:
@@ -141,7 +143,7 @@ spec:
           - *host
           secretName: "bitwarden-${SECRET_DOMAIN/./-}-tls"
       admin:
-        enabled: true
+        enabled: false
         ingressClassName: "traefik"
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"

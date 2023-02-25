@@ -16,3 +16,4 @@ resources:
   - stakater-charts.yaml
   - traefik-charts.yaml
   - gitlab-charts.yaml
+  - hashicorp-charts.yaml
