@@ -83,19 +83,6 @@ spec:
         minVersion: VersionTLS12
         maxVersion: VersionTLS13
         sniStrict: true
-    affinity:
-      podAntiAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-                - key: app.kubernetes.io/name
-                  operator: In
-                  values:
-                    - traefik
-            topologyKey: kubernetes.io/hostname
-    tolerations:
-      - key: "node-role.kubernetes.io/master"
-        operator: "Exists"
     resources:
       requests:
         memory: 100Mi
