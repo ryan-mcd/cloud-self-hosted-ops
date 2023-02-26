@@ -17,3 +17,6 @@ resources:
   - traefik-charts.yaml
   - gitlab-charts.yaml
   - hashicorp-charts.yaml
+  - istio-charts.yaml
+  - jaegertracing-charts.yaml
+  - kiali-charts.yaml
