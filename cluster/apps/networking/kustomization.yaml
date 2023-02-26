@@ -5,4 +5,5 @@ resources:
   - namespace.yaml
   - cert-manager
   - duckdns
+  - cloudflared/ks.yaml
   # - traefik
