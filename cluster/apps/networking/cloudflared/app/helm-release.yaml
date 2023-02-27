@@ -28,6 +28,8 @@ spec:
       tag: "2023.2.1"
     args:
       - tunnel
+      - --loglevel
+      - debug
       - --config
       - /etc/cloudflared/config.yaml
       - --metrics
