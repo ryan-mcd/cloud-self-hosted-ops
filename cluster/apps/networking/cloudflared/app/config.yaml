@@ -7,4 +7,6 @@ originRequest: # Top-level configuration
 ingress:
   - hostname: hashivault.${SECRET_DOMAIN}
     service: https://istio-gateway.istio-ingress.svc.cluster.local
+    originRequest:
+      noTLSVerify: true
   - service: http_status:404
