@@ -24,6 +24,9 @@ spec:
       hosts:
         - '${SECRET_DOMAIN}'
         - '*.${SECRET_DOMAIN}'
+        - istio-gateway.istio-ingress.svc.cluster.local
+        - istio-gateway.istio-ingress.svc
+        - istio-gateway.istio-ingress
       tls:
         credentialName: istio-prod-cert-tls
         mode: SIMPLE
