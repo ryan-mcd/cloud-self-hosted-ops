@@ -9,4 +9,8 @@ ingress:
     service: https://istio-gateway.istio-ingress.svc.cluster.local
     originRequest:
       noTLSVerify: true
+  - hostname: id.${SECRET_DOMAIN}
+    service: https://istio-gateway.istio-ingress.svc.cluster.local
+    originRequest:
+      noTLSVerify: true
   - service: http_status:404
