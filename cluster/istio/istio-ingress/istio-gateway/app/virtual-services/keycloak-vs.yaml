@@ -11,10 +11,16 @@ spec:
   gateways:
     - istio-ingress/istio-ingressgateway 
   http:
+    - name: root
+      match:
+      - uri:
+          exact: /
+      redirect:
+        uri: /auth
     - name: http
       match:
         - uri:
-            prefix: "/"
+            prefix: "/auth"
         # - uri:
         #     prefix: "/realms"
         # - uri:
