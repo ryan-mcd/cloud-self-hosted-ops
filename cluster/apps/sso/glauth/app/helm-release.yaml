@@ -28,7 +28,7 @@ spec:
     keepHistory: false
   values:
     controller:
-      replicas: 2
+      replicas: 1
       strategy: RollingUpdate
       annotations:
         reloader.stakater.com/auto: "true"
@@ -45,6 +45,9 @@ spec:
           ldap:
             enabled: true
             port: 389
+          ldaps:
+            enabled: true
+            port: 636
     serviceMonitor:
       main:
         enabled: false
@@ -71,6 +74,14 @@ spec:
             path: groups.toml
           - key: users.toml
             path: users.toml
+      glauth-tls:
+        enabled: true
+        type: custom
+        volumeSpec:
+          secret:
+            secretName: glauth-cert-tls
+        mountPath: /app/config/cert
+        readOnly: true
     topologySpreadConstraints:
       - maxSkew: 1
         topologyKey: kubernetes.io/hostname

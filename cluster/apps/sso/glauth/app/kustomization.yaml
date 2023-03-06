@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: sso
 resources:
 - helm-release.yaml
+- certificates.yaml
 
 secretGenerator:
   - name: glauth-secret
