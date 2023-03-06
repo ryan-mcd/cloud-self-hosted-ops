@@ -4,3 +4,4 @@ resources:
   - hashivault-vs.yaml
   - vaultwarden-vs.yaml
   - keycloak-vs.yaml
+  - glauth-vs.yaml
