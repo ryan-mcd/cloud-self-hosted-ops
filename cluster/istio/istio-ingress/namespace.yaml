@@ -6,6 +6,6 @@ metadata:
   labels:
     goldilocks.fairwinds.com/enabled: "true"
   annotations:
-    "cni.projectcalico.org/ipv4pools": "[\"lb-pool\"]"
     istio-injection: enabled
     kustomize.toolkit.fluxcd.io/prune: disabled
+    # "cni.projectcalico.org/ipv4pools": "[\"lb-pool\"]"

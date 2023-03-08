@@ -5,5 +5,5 @@ metadata:
   name: istio-system
   labels:
     goldilocks.fairwinds.com/enabled: "true"
-  annotations:
-    "cni.projectcalico.org/ipv4pools": "[\"default-ipv4-ippool\"]"
+  # annotations:
+  #   "cni.projectcalico.org/ipv4pools": "[\"default-ipv4-ippool\"]"
