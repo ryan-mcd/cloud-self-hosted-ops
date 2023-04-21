@@ -9,7 +9,7 @@ spec:
   retryInterval: 1m
   timeout: 3m
   path: "./cluster/apps/sso/postgres/app"
-  prune: true
+  prune: false
   wait: true
   sourceRef:
     kind: GitRepository

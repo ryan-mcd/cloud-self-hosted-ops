@@ -9,7 +9,7 @@ spec:
   retryInterval: 1m
   timeout: 3m
   path: "./cluster/istio/istio-ingress/istio-gateway/app"
-  prune: true
+  prune: false
   wait: false
   sourceRef:
     kind: GitRepository
